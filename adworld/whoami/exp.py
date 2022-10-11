@@ -1,7 +1,7 @@
 from pwn import *
 from LibcSearcher import *
-p=remote('61.147.171.105',51339)
-# p=process('./whoami')
+# p=remote('61.147.171.105',51339)
+p=process('./whoami')
 elf=ELF('./whoami')
 libc=ELF('/home/cutecabbage/glibc-all-in-one/libs/2.27-3ubuntu1_amd64/libc.so.6')
 rl = lambda	a=False		: p.recvline(a)
