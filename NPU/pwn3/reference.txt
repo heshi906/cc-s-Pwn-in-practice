@@ -1,0 +1,5 @@
+https://www.anquanke.com/post/id/236832  ORW的解题手法，泄露栈地址方法，栈迁移到堆方法 
+https://blog.csdn.net/Breeze_CAT/article/details/100087036 open-read-write
+https://blog.csdn.net/weixin_54076783/article/details/124355452
+http://www.hackdig.com/06/hack-386410.htm 沙盒
+https://www.anquanke.com/post/id/164558 不知道有没有用 IO_FILE
