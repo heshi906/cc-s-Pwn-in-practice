@@ -3,8 +3,8 @@ from pwn import *
 from LibcSearcher import * 
 # context.log_level = 'debug' 
 context.arch = 'amd64'
-# p=process('./orw')
-p=remote('t.ctf.qwq.cc',49155)
+p=process('./orw')
+# p=remote('t.ctf.qwq.cc',49155)
 elf=ELF('./orw')
 libc=ELF('./libc-2.31.so')
 def add(length,content):
