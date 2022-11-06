@@ -1,11 +1,16 @@
 # pet simulator  
 堆题，保护全开。这题一开始忘给libc附件了，我不知道是tcache所以一开始没敢做，然后free后发现有tcache的特征才确认。  
+**add**  
 ![](./pics/add.png)  
+**show**  
 ![](./pics/show.png)  
+**del**  
 ![](./pics/del.png)  
+**edit**  
 ![](./pics/edit.png)  
+**comment**  
 ![](./pics/comment.png)  
-发现edit可以覆盖到下一个heap的前一部分，因此可以把tcache中的指针泄露出来。  
+发现edit可以覆盖到下一个chunk的前一部分，因此可以把tcache中的指针泄露出来。  
 ```
 add()
 add()
@@ -53,4 +58,4 @@ free(0)
 p.interactive()
 ```
 注意如果当时为了得到libc时开的chunk不能free，那么就不能完成最后一次投毒。  
-其实没用到comment函数，感觉这个函数没啥作用。
+整个过程没用到comment函数，感觉这个函数没啥作用。

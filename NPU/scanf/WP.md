@@ -4,6 +4,7 @@
 ![](./pics/funadd.png)
 由于保护全开，需要先知道libcbase和canary。  
 考察的是scanf的特性，使用scanf("%d",&pos)写数字，传入字符'+'可以跳过读写不改变地址原先存放的内容。  
+可以这样获得栈里的数据。  
 因此实际上canary也不需要知道，在遇到它时传'+'跳过就行了。  
 add函数的栈帧如下：  
 ![](./pics/stack.png)  

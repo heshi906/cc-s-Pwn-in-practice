@@ -1,5 +1,5 @@
 # pwn3  
-考查的是orw，即open read write  
+考查的是orw，即open read write，第一次遇到这种题  
 ![](./pics/seccomp.png)  
 这道题保护全开，还开了沙盒，所以不能用onegadget或system来getshell  
 ![](./pics/add.png)  
@@ -87,6 +87,6 @@ rop_link+= p64(pop_rdi)+p64(heap_addr+0xb50)+p64(puts_addr)
 edit(2,rop_link)#这段rop被放在rbp下面
 p.interactive()
 ```
-实话实说，结果这个ROP链卡我的时间最久，因为按理rdi要赋值为字符串flag的指针，而我居然赋了个指针的指针，却始终没有发现，导致open失败（而我竟然一直以为是open也被禁用了）以后一定要杜绝此类现象发生。  
+实话实说，结果这个ROP链卡我的时间最久，因为按理rdi要赋值为字符串flag的指针，而我居然赋了个指针的指针却始终没有发现问题，导致open失败（而我竟然一直以为是open也被禁用了）以后一定要杜绝此类现象发生。  
 
 

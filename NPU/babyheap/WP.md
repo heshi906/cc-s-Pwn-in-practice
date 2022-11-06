@@ -1,9 +1,13 @@
 # babyheap  
 ![](./pics/chc.png)  
 又是一道有后门的题  
+**show**  
 ![](./pics/show.png)  
+**create**  
 ![](./pics/create.png)  
+**del**  
 ![](./pics/del.png)  
+**edit**  
 ![](./pics/edit.png)  
 很明显的bug是edit那里，可以编辑0x50字节，也就是说能覆盖下面的heap。  
 ```
@@ -46,4 +50,4 @@ edit(7,b'\xdd\x16\x40\x00\x00\x00\x00')
 create(8,0x50,b'nnnn')
 p.interactive()
 ```
-再次调用malloc时就能getshell
+再次调用malloc时就能getshell。

@@ -46,9 +46,10 @@ def realpayload(payload):
 2. 利用任意地址写把exit函数的got表改为main函数里任意地址写的前面的地址，这样可以无限次利用  
 3. 多次利用任意地址写在rbp下面构造rop链，并将\bin\sh写到bss段  
 4. 构造完成将exit的got表改为return的地址，退出重复调用    
+
 细则：
 libc和stack的地址分别处于第31和34个参数，用%p输出得到  
 ![](./pics/getpos.png)  
 此次rop链使用execve法，要点如下：  
 64位下要使rax为0x3b，rdi为"\bin\sh"的地址，rsi和rdx为0  
-没用其他方法（system，onegadget）貌似是因为不知道为什么把exit改了以后有很多函数就不能再调用了，包括当时本来想把exit直接改成格式化字符串漏洞函数前的地址，但试了之后发现在调用printf时出错了。  
+没用其他方法（system，onegadget）是因为不知道为什么把exit改了以后有很多函数就不能再调用了，包括当时本来想把exit直接改成格式化字符串漏洞函数前的地址，但试了之后发现在调用printf时出错了，system等函数也是一样。  
