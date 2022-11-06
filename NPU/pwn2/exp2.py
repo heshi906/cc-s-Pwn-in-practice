@@ -1,4 +1,3 @@
-from re import M
 from z3 import *
 from pwn import *
 from LibcSearcher import *
@@ -45,7 +44,7 @@ def findloc(c):
 
 context.log_level = 'debug' 
 # p=process('./easy_pwn')
-p=remote('t.ctf.qwq.cc',49363)
+p=remote('t.ctf.qwq.cc',49175)
 elf=ELF('./easy_pwn')
 libc=ELF('./libc-2.27.so')
 p.recvuntil(b'tell me your name\n')
