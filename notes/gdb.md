@@ -12,3 +12,5 @@ gdb at pid  --attach
 start  
 b *$rebase(addr)
 
+p *(struct _IO_jump_t*)_IO_list_all.vtable
+p/x *_IO_list_all

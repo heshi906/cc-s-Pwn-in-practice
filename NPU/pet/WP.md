@@ -58,4 +58,16 @@ free(0)
 p.interactive()
 ```
 注意如果当时为了得到libc时开的chunk不能free，那么就不能完成最后一次投毒。  
-整个过程没用到comment函数，感觉这个函数没啥作用。
+整个过程没用到comment函数，感觉这个函数没啥作用。  
+
+另外，做这题时还学到了另一个东西，就是当时gdb调试时libc切到了2.31 9.9导致我heap和bin看不了（其他版本的都可以看，很离谱），最后像瞎子一样摸才摸出这道题来。  
+![](./pics/noheap.png)  
+现在得知了方法，那就是在patchelf之后要把debug目录进行替换，否则就可能出现heap看不了的情况。  
+![](./pics/fix.png)  
+```
+rm -rf /usr/lib/debug
+cp -r /home/cutecabbage/glibc-all-in-one/libs/2.31-0ubuntu9.9_amd64/.debug/ /usr/lib/debug
+```
+heap恢复正常！
+![](./pics/canheap.png)  
+
