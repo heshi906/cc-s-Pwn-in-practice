@@ -22,3 +22,14 @@ system puts write gets read
 one_gadget ./libc.so.6
  
 
+
+
+
+
+
+
+
+
+
+
+
