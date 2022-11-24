@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-long long int chunks[200];
+long long int chunks[30];
 void menu()
 {
 
@@ -9,14 +9,12 @@ void menu()
     printf("1.malloc        2.edit\n");
     printf("3.free          4.show one\n");
     printf("5.show all      6.exit\n");
-    printf("7.edit direct   8.\n");
-    printf("\n");
-    printf("your choice > ");
+    printf("7.edit direct   8.show direct\n");
+    printf("9.add cover\n");
+    printf("your choice >\n");
 }
-int main()
+void vlun()
 {
-    printf("Welcome to my test!\n");
-    printf("the puts addr is @ %p\n", puts);
     while (1)
     {
         menu();
@@ -25,7 +23,7 @@ int main()
         if (choce == 1)
         {
             int size;
-            printf("size:");
+            printf("size:\n");
             scanf("%d", &size);
             long long int *p = malloc(size);
             if (p == NULL)
@@ -34,7 +32,7 @@ int main()
                 continue;
             }
             int i;
-            for (i = 0; i < 200; i++)
+            for (i = 0; i < 30; i++)
             {
                 if (chunks[i] == 0)
                 {
@@ -47,9 +45,9 @@ int main()
         else if (choce == 2)
         {
             int index;
-            printf("index:");
+            printf("index:\n");
             scanf("%d", &index);
-            if (index < 0 || index >= 200)
+            if (index < 0 || index >= 30)
             {
                 printf("index error!\n");
                 continue;
@@ -59,17 +57,15 @@ int main()
                 printf("this chunk is free!\n");
                 continue;
             }
-            char buf[0x100];
-            printf("thing:");
-            scanf("%s", buf);
-            strcpy((char *)chunks[index], buf);
+            printf("thing:\n");
+            read(0, (void *)chunks[index], 0x100);
         }
         else if (choce == 3)
         {
             int index;
-            printf("index:");
+            printf("index:\n");
             scanf("%d", &index);
-            if (index < 0 || index >= 200)
+            if (index < 0 || index >= 30)
             {
                 printf("index error!\n");
                 continue;
@@ -84,9 +80,9 @@ int main()
         else if (choce == 4)
         {
             int index;
-            printf("index:");
+            printf("index:\n");
             scanf("%d", &index);
-            if (index < 0 || index >= 200)
+            if (index < 0 || index >= 30)
             {
                 printf("index error!\n");
                 continue;
@@ -96,22 +92,23 @@ int main()
                 printf("this chunk is free!\n");
                 continue;
             }
-            printf("%s\n", (char *)chunks[index]);
+            printf("things:%s!!!\n", (char *)chunks[index]);
         }
         else if (choce == 5)
         {
             printf("chunks\n");
             int i;
-            for (i = 0; i < 200; i++)
+            for (i = 0; i < 30; i++)
             {
                 if (chunks[i] != 0)
                 {
                     if (i % 2 == 0)
-                        printf("%d: %p %#x  ", i, chunks[i], *(int *)(chunks[i] - 8));
+                        printf("%d: %p %#x,  ", i, chunks[i], *(int *)(chunks[i] - 8));
                     if (i % 2 == 1)
-                        printf("%d: %p %#x\n", i, chunks[i], *(int *)(chunks[i] - 8));
+                        printf("%d: %p %#x,\n", i, chunks[i], *(int *)(chunks[i] - 8));
                 }
             }
+            puts("finish");
         }
         else if (choce == 6)
         {
@@ -120,13 +117,52 @@ int main()
         else if (choce == 7)
         {
             long long int addr;
-            printf("position:");
+            printf("position:\n");
             scanf("%lld", &addr);
             read(0, (void *)addr, 0x100);
         }
+        else if (choce == 8)
+        {
+            long long int addr;
+            printf("position:\n");
+            scanf("%lld", &addr);
+            int len;
+            printf("len:\n");
+            scanf("%d", &len);
+            write(1, (void *)addr, len);
+        }
+        else if (choce == 9)
+        {
+            int index;
+            printf("index:\n");
+            scanf("%d", &index);
+            int size;
+            printf("size:\n");
+            scanf("%d", &size);
+            long long int *p = malloc(size);
+            if (p == NULL)
+            {
+                printf("malloc failed!\n");
+                continue;
+            }
+            chunks[index] = (long long int)p;
+            printf("malloc success!\nthe index is @ %d\nthe addr is @ %p\n", index, p);
+            break;
+        }
+
         else
         {
             printf("error choice!\n");
         }
     }
+}
+int main()
+{
+    setbuf(stdout, NULL);
+    setbuf(stderr, NULL);
+    printf("Welcome to my test!\n");
+    long long int puts_addr = (long long int)puts;
+    printf("the puts addr is @ %lld\n", puts_addr);
+    vlun();
+    return 0;
 }
