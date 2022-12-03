@@ -9,7 +9,7 @@ from pwn import *
     6   \x5b    
     7   \x5d    
     8   \x00    free
-    9   \x01    
+    9   \x01        
 """
 # p=process('./chall')
 p=remote("47.108.29.107",10116)
