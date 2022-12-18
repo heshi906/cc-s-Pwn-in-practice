@@ -17,4 +17,9 @@
 | context     | 打印 pwnbdg 页面信息                               |                                                              |
 |dps|好看的显示内存|dps $ebp-0x10|
 |disassemble|打印函数|disassemble main|
+
+
+更改汇编风格为AT&T
+set disassembly-flavor att
+
 https://www.cnblogs.com/zhwer/p/12494317.html

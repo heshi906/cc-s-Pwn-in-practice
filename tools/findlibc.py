@@ -26,10 +26,14 @@ parser.add_argument(' ',  nargs='*', default=sys.argv)
 args = parser.parse_args()
 print(args)
 libcpath=args.l
-if len(args.__getattribute__(' ')):
+if len(args.__getattribute__(' ')) :
     _=args.__getattribute__(' ')
-    libcpath=_[0]
-    args.f=_[1::]
+    if  not args.no:
+        libcpath=_[0]
+        args.f=_[1::]
+    else:
+        args.f=_
+        
 pwd=os.getcwd()
 libcpath=os.path.abspath(libcpath)
 if not args.no:
@@ -50,7 +54,6 @@ else:
             values[i]=int(values[i],16)
         else:
             values[i]=int(values[i])
-        print(funtions[i],hex(values[i]))
     print(bcolors.OKGREEN+"LibcSearcher:",funtions[0],hex(values[0]),bcolors.ENDC)
     libc2=LibcSearcher(funtions[0],values[0])
     for i in range(1,len(funtions)):
@@ -61,6 +64,8 @@ if args.a:
     print(bcolors.WARNING+"find",len(libc2.libc_list),"libc",bcolors.ENDC)
     for i in range(len(libc2.libc_list)):
         print("["+str(i)+"] "+libc2.libc_list[i]['id'])
+    if len(libc2.libc_list)==0:
+        exit()
     index=input("input index: ")
     index=int(index)
     print(bcolors.WARNING+"detail",libc2.libc_list[index]['id'],bcolors.ENDC)
