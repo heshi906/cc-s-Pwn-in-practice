@@ -18,8 +18,15 @@
 |dps|好看的显示内存|dps $ebp-0x10|
 |disassemble|打印函数|disassemble main|
 
+设置初始参数
+set args -u 114514 < txt.txt
 
 更改汇编风格为AT&T
 set disassembly-flavor att
 
 https://www.cnblogs.com/zhwer/p/12494317.html
+
+# objdump
+
+objdump -d -M intel ./bufbomb > bomb.asm #intel
+objdump -d  ./bufbomb > bomb.asm   #at&t
