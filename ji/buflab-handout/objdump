@@ -1,0 +1,5 @@
+# objdump
+
+objdump -d -M intel ./bufbomb > bomb.asm #intel
+objdump -d  ./bufbomb > bomb.asm   #at&t
+
