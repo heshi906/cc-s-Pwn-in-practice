@@ -5,7 +5,7 @@ context.arch = 'i386'
 libc=ELF('./libc_32.so.6')
 # libc=ELF('/home/cutecabbage/glibc-all-in-one/libs/2.27-3ubuntu1_i386/libc.so.6')
 # p=process('./hacknote')
-p=remote('61.147.171.105',62260)
+p=remote('61.147.171.105', 64860)
 # pause()
 elf=ELF('./hacknote')
 def add(size,content):

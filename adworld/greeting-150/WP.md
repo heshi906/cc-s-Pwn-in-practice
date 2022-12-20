@@ -11,7 +11,7 @@
 ![](./pics/init_fini_array.png)  
 使用pwndbg查看  
 ![](./pics/fini_in_gdb.png)
-因此把fini_array中的函数地址改为main函数地址（最后一字节改为0xed即可）后就能重复调用main了  
+因此把fini_array中的函数地址改为main函数地址（最后一字节改为0xed即可）后就能重复调用main了，这种做法感觉挺有用，需要额外注意一下。  
 ## 解题过程  
 首先payload需要有2字节进行对齐（字符串s的开头是Nice to meet you, ），调试后发现第一个参数对应的索引为12，后面都没什么难度，直接放改完后的情况  
 ![](./pics/finish1.png)  

