@@ -13,52 +13,57 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-funtions=["read","system"]
+functions=[]
 values=[]
-libcpath='./libc-2.27.so'
+libcpath=''
 parser = argparse.ArgumentParser(description='para transfer')
 parser.add_argument('-a', action='store_true', default=False, help='show all libc')
 parser.add_argument('--no', action='store_true', default=False, help='use way 2')
-parser.add_argument('-f',  nargs='*', default=funtions, help="select function")
-parser.add_argument('-l', type=str, default=libcpath, help='libc path')
+parser.add_argument('-f',nargs='*', default=functions, help="select function")
+parser.add_argument('-l',nargs="?", type=str, default=libcpath, help='libc path')
 parser.add_argument('--dump',nargs='*', default=[], help="dump function")
-parser.add_argument(' ',  nargs='*', default=sys.argv)
+parser.add_argument("arg",nargs="?",type=str)
+parser.add_argument("arg2",nargs="*",type=str)
 args = parser.parse_args()
 print(args)
 libcpath=args.l
-if len(args.__getattribute__(' ')) :
-    _=args.__getattribute__(' ')
-    if  not args.no:
-        libcpath=_[0]
-        args.f=_[1::]
-    else:
-        args.f=_
-        
-pwd=os.getcwd()
+if libcpath=='' and not args.no:
+    libcpath=args.arg
+else :
+    args.arg2.insert(0,args.arg)
 libcpath=os.path.abspath(libcpath)
+print('libcpath',libcpath)
+functions=args.f
+if functions==[]:
+    functions=args.arg2
+    if functions==[]:
+        functions=['read','system']
+print('functions',functions)
+
 if not args.no:
     print(bcolors.WARNING+'path',libcpath,bcolors.ENDC)
     libc=ELF(libcpath)
-    for i in args.f:
+    for i in functions:
         print(i,hex(libc.sym[i]))
-    print(bcolors.OKGREEN+"LibcSearcher:",args.f[0],hex(libc.sym[args.f[0]]),bcolors.ENDC)
-    libc2=LibcSearcher(args.f[0],libc.sym[args.f[0]])
-    for i in range(1,len(args.f)):
-        print(bcolors.OKGREEN+"AddCondition:",args.f[i],hex(libc.sym[args.f[i]]),bcolors.ENDC)
-        libc2.add_condition(args.f[i],libc.sym[args.f[i]])
+    print(bcolors.OKGREEN+"LibcSearcher:",functions[0],hex(libc.sym[functions[0]]),bcolors.ENDC)
+    libc2=LibcSearcher(functions[0],libc.sym[functions[0]])
+    for i in range(1,len(functions)):
+        print(bcolors.OKGREEN+"AddCondition:",functions[i],hex(libc.sym[functions[i]]),bcolors.ENDC)
+        libc2.add_condition(functions[i],libc.sym[functions[i]])
 else:
-    funtions=args.f[0::2]
-    values=args.f[1::2]
-    for i in range(len(funtions)):
+    values=functions[1::2]
+    functions=functions[0::2]
+
+    for i in range(len(functions)):
         if values[i][0:2]=='0x':
             values[i]=int(values[i],16)
         else:
             values[i]=int(values[i])
-    print(bcolors.OKGREEN+"LibcSearcher:",funtions[0],hex(values[0]),bcolors.ENDC)
-    libc2=LibcSearcher(funtions[0],values[0])
-    for i in range(1,len(funtions)):
-        print(bcolors.OKGREEN+"AddCondition:",funtions[i],hex(values[i]),bcolors.ENDC)
-        libc2.add_condition(funtions[i],values[i])
+    print(bcolors.OKGREEN+"LibcSearcher:",functions[0],hex(values[0]),bcolors.ENDC)
+    libc2=LibcSearcher(functions[0],values[0])
+    for i in range(1,len(functions)):
+        print(bcolors.OKGREEN+"AddCondition:",functions[i],hex(values[i]),bcolors.ENDC)
+        libc2.add_condition(functions[i],values[i])
     
 if args.a:
     print(bcolors.WARNING+"find",len(libc2.libc_list),"libc",bcolors.ENDC)
@@ -74,6 +79,9 @@ if args.a:
     print()
 
 else:
+    if len(libc2.libc_list)==0:
+        print(bcolors.WARNING+'not find',bcolors.ENDC)
+        exit()
     index=0
     print(bcolors.WARNING+"find one",libc2.libc_list[0]['id'],bcolors.ENDC)
     print("download_url",libc2.libc_list[0]['download_url'])

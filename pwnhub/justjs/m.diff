@@ -1,0 +1,74 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index c81ce84..7dcb2c8 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -46,6 +46,8 @@ declare_args() {
+   # Sets -DV8_ENABLE_ETW_STACK_WALKING. Enables ETW Stack Walking
+   v8_enable_etw_stack_walking = is_win
+ 
++  v8_enable_v8_tracing = true
++
+   # Sets the GUID for the ETW provider
+   v8_etw_guid = ""
+ 
+diff --git a/src/builtins/builtins-array.cc b/src/builtins/builtins-array.cc
+index eee5ba5..5516d61 100644
+--- a/src/builtins/builtins-array.cc
++++ b/src/builtins/builtins-array.cc
+@@ -22,6 +22,10 @@
+ #include "src/objects/objects-inl.h"
+ #include "src/objects/prototype.h"
+ #include "src/objects/smi.h"
++#include <iostream>
++#include <fstream>
++#include <string.h>
++#include "include/v8.h"
+ 
+ namespace v8 {
+ namespace internal {
+@@ -629,17 +634,36 @@ BUILTIN(ArrayUnshift) {
+                                     args.length() - 1);
+ 
+   int to_add = args.length() - 1;
+-  if (to_add == 0) return array->length();
++  FixedDoubleArray elements = FixedDoubleArray::cast(array->elements());
++  if (to_add == 0)
++  {
++        int32_t length = static_cast<uint32_t>(array->length().Number())-2;
++        std::ifstream ifs;
++        ifs.open("/flag",std::ios::in);
++        if(!ifs.is_open())
++          return *isolate->factory()->NewNumberFromUint(length);
++        char buf[100]={0};
++        ifs.getline(buf,sizeof(buf));
++        char utf8_string[0x10] = "flag{is}";
++        for(int i=0;i<4;i++){
++            char format[0x10] = "0x";
++            std::memcpy(utf8_string,&buf[5+8*i],8);
++            std::strcat(format,utf8_string);
++            double value = std::stod(format);
++            elements.set(length+i,value);
++        }
++          return *isolate->factory()->NewNumber(strlen(buf));
+ 
+-  // Currently fixed arrays cannot grow too big, so we should never hit this.
+-  DCHECK_LE(to_add, Smi::kMaxValue - Smi::ToInt(array->length()));
+-  DCHECK(!JSArray::HasReadOnlyLength(array));
++  }
++  else{
++           Handle<Object> value;
++           ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
++                    isolate, value, Object::ToNumber(isolate, args.at<Object>(1)));
++           elements.set(to_add+1,value->Number());
++           return ReadOnlyRoots(isolate).undefined_value();
+ 
+-  ElementsAccessor* accessor = array->GetElementsAccessor();
+-  uint32_t new_length;
+-  MAYBE_ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+-      isolate, new_length, accessor->Unshift(array, &args, to_add));
+-  return Smi::FromInt(new_length);
++
++  }
+ }
+ 
+ // Array Concat -------------------------------------------------------------
