@@ -1,0 +1,2 @@
+read("flag")
+eval(read("flag"))

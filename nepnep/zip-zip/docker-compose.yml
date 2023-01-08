@@ -1,0 +1,7 @@
+version: "2"
+services:
+  god:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "6598:8888"
