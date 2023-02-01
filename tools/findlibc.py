@@ -67,8 +67,9 @@ else:
     
 if args.a:
     print(bcolors.WARNING+"find",len(libc2.libc_list),"libc",bcolors.ENDC)
+    print(libc2.libc_list)
     for i in range(len(libc2.libc_list)):
-        print("["+str(i)+"] "+libc2.libc_list[i]['id'])
+        print("["+str(i)+"] ",libc2.libc_list[i]['id'])
     if len(libc2.libc_list)==0:
         exit()
     index=input("input index: ")
