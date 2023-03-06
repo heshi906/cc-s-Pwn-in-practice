@@ -40,7 +40,9 @@ system_addr=libcbase+libc.dump('system')
 system puts write gets read  
 
 one_gadget ./libc.so.6
- 
+
+
+
 
 
 
