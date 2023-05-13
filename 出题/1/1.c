@@ -1,8 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+int init()
+{
+    fflush(stdin);
+    fflush(stdout);
+    fflush(stderr);
+    setvbuf(stdin,0,_IONBF,0);
+    setvbuf(stdin,0,_IONBF,0);
+    setvbuf(stderr,0,_IONBF,0);
+    return alarm(0x14);
+}
+
 int main()
 {
+    init();
     setvbuf(stdout, 0, 2, 0);
     setvbuf(stdin, 0, 2, 0);
     puts("My cat is very cute! I want to show it to you!");
