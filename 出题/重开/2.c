@@ -44,7 +44,7 @@ char *work[] = {
 int moneylist[]={1,3,5};
 int moneyindex;
 void initmoney(){
-    remove("money.txt");
+    // remove("money.txt");
     FILE *fp;
     fp = fopen("money.txt", "w");
     if (fp == NULL) {
@@ -129,6 +129,8 @@ void beginwork(){
 int main()
 {
     init();
+    setvbuf(stdout, 0, 2, 0);
+    setvbuf(stdin, 0, 2, 0);
     initmoney();
     puts("欢迎来到人生重开模拟器之我要创业赚大钱，按下回车键开始吧~");
     puts("<Press enter to continue.>");
