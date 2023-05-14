@@ -44,9 +44,15 @@ char *work[] = {
 int moneylist[]={1,3,5};
 int moneyindex;
 void initmoney(){
-    // remove("money.txt");
+   // remove("/tmp/money.txt");
+    puts("init");
+    //FILE *f;
+    //f = fopen("/tmp/money.txt", "r");
+    //char buffer[255];
+    //fscanf(f, "%s", buffer);
+    //printf("%s",buffer);
     FILE *fp;
-    fp = fopen("money.txt", "w");
+    fp = fopen("/tmp/money.txt", "w");
     if (fp == NULL) {
     printf("文件创建失败");
     exit(1);
@@ -59,7 +65,7 @@ int get_money(){
     char buffer[255];
 
     // 打开money.txt文件
-    fp = fopen("money.txt", "r");
+    fp = fopen("/tmp/money.txt", "r");
     if (fp == NULL) {
         printf("文件打开失败");
         exit(1);
@@ -74,7 +80,7 @@ int add_money(int num){
     int money=get_money();
     int newmoney=money+num;
     FILE *fp;
-    fp = fopen("money.txt", "w");
+    fp = fopen("/tmp/money.txt", "w");
     if (fp == NULL) {
         printf("文件打开失败");
         exit(1);

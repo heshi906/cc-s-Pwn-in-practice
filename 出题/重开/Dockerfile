@@ -24,9 +24,6 @@ RUN mkdir /home/ctf/bin && \
     cp /bin/ls /home/ctf/bin && \
     cp /bin/cat /home/ctf/bin
 
-RUN touch /home/ctf/money.txt && \
-    chmod 666 /home/ctf/money.txt
-
 COPY ./ctf.xinetd /etc/xinetd.d/ctf
 COPY ./start.sh /start.sh
 RUN echo "Blocked by ctf_xinetd" > /etc/banner_fail
