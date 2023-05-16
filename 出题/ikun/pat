@@ -1,0 +1,2 @@
+patchelf --set-interpreter /home/cc/glibc-all-in-one/libs/2.31-0ubuntu9_amd64/ld-2.31.so ./ikun
+patchelf --replace-needed  libc.so.6 /home/cc/glibc-all-in-one/libs/2.31-0ubuntu9_amd64/libc.so.6 ./ikun

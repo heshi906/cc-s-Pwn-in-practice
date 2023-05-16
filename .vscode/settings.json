@@ -1,6 +1,13 @@
 {
     "files.associations": {
+        "*.m": "matlab",
+        "*.h": "c",
+        "*.c": "c",
+        "*.cpp": "cpp",
+        "*.py": "python",
+        "*.go": "go",
         "stdlib.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "typeinfo": "c"
     }
 }
