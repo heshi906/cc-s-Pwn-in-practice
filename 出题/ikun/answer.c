@@ -10,7 +10,7 @@ int main(){
     scanf("%u",&seed);
     srand(seed);
     printf("seed input %u\n",seed);
-    for(int i=0;i<20;i++){
+    for(int i=0;i<114;i++){
         int r=rand()%4;
         // printf("%d",r);
         if(r==0){

@@ -25,11 +25,13 @@ int main()
     init();
     setvbuf(stdout, 0, 2, 0);
     setvbuf(stdin, 0, 2, 0);
-    unsigned int seed;
-    char name[12];
+    char name[24]="ikunikunikunikun";
+    unsigned int *seed=(unsigned int *)(name+12);
+
     puts("I'm an ikun, and you? You don't have to answer. I can get know it simply by your name");
-    seed= (unsigned)time(NULL);
-    printf("seed: %u",seed);
+    *seed= (unsigned)time(NULL);
+    // *seed=1684263214;
+    // printf("seed: %u",*seed);
     puts("Let's test if you are a real ikun !");
     puts("please enter your name first: ");
     for(int i=0;i<12;i++){
@@ -45,7 +47,7 @@ int main()
     }
     puts("I heard that a real ikun can predict all the movements of KunKun. Can you do that?");
     printf("OK, %s, Please enter the next 114 movements of KunKun (c for sign, t for jump, r for rap, l for backetball)\n",name);
-    doit(seed);
+    doit(*seed);
 
     return 0;
 }
@@ -87,14 +89,25 @@ int doit(unsigned int seed){
             }
         }
     }
+    getchar();
     puts("Congratulations on passing the test. You are a real ikun! ");
-    printf("A gift for you. The address of main() function is: %s\n", &main);
-
+    printf("A gift for you. The puts addr is: %s\n", (char*)0x602018);
     puts("say something for our KunKun!");
-    char say[0x20];
-    read(0,say,0x20);
+    char say[0x50];
+    for(int i=0;i<0x50;i++){
+        say[i]=getchar();
+        if(say[i]=='\n'||say[i]=='\r'){
+            say[i]='\0';
+            break;
+        }
+    }
     printf(say);
-    system("ca t flag.txt");
+    // if(rand()%2){
+        // puts("KunKun: I love you too!");
+    // }else{
+        puts("KunKun: I love you too!");
+        system("ca t flag.txt");
+    // }
     
 
 }
