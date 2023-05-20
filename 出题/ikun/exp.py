@@ -13,8 +13,7 @@ print("my seed",u32(seed))
 moves=input("输入动作")
 # 判断moves第100个字符是不是c，如果是c就改成t，如果不是就改成c
 # new_s='cctlrctcttlttcrlcrrllrcrtrllctrltlrlclctclrrlctlllrrtrcrcltcccltlttlttctcllllcrrlcccrcrlcclcclrlclltcllcrrlrltcrtt'
-
-if moves[100]=='c':
+if moves[99]=='c':
     new_s = moves[:99] + 't' + moves[100:]
 else:
     new_s = moves[:99] + 'c' + moves[100:]
