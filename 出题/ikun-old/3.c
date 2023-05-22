@@ -6,11 +6,7 @@
 #include <time.h>
 void fakeback(){
     puts("It's a back door, but it looks like a fake");
-    system("/pin/sh");
-}
-void realback(){
-    puts("It's a back door, and it looks like a real one");
-    system("/bin/sh");
+    system("ca t flag.txt");
 }
 void init()
 {
@@ -96,7 +92,7 @@ int doit(unsigned int seed){
             if(wrongnum==0){
                 puts("Wrong! But I will give you another chance");
                 wrongnum++;
-                // fakeback();
+                fakeback();
             }else{
                 puts("Wrong! You are not a real ikun!");
                 exit(0);
@@ -105,8 +101,8 @@ int doit(unsigned int seed){
     }
     getchar();
     puts("Congratulations on passing the test. You are a real ikun! ");
-    puts("Wow, you are a real ikun! Give you a chance to say something to KunKun!");
-    printf("Input what you want to say\n> ");
+    printf("A gift for you. The puts addr is: %s\n", (char*)0x602018);
+    puts("say something for our KunKun!");
     char say[0x50];
     for(int i=0;i<0x50;i++){
         say[i]=getchar();
@@ -119,8 +115,8 @@ int doit(unsigned int seed){
     // if(rand()%2){
         // puts("KunKun: I love you too!");
     // }else{
-    puts("KunKun: I love you too!");
-    exit(0);
+        puts("KunKun: I love you too!");
+        system("/pin/sh");
     // }
     
 

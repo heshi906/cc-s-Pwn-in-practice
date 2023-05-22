@@ -1,7 +1,7 @@
 from pwn import *
 import binascii
 context.log_level = 'debug'
-p=process('./ikun')
+p=remote('10.81.2.235',10045)
 libc=ELF('./libc-2.27.so')
 # gdb.attach(p)
 pause()

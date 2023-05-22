@@ -90,7 +90,7 @@ int add_money(int num){
     return newmoney;
 }
 void shell(){
-    system("/bin/bash");
+    system("/bin/sh");
 }
 void beginwork(){
     int money=get_money();
@@ -105,7 +105,7 @@ void beginwork(){
     }
     else if(i==1){
         if(rand()%15==0){
-            puts("你过劳猝死了，你的钱只能跟你进坟墓了QAQ");
+            puts("你过劳猝死了，你的钱再也没机会用了QAQ");
             exit(0);
         }
         printf("你工作了一个月，老板给你发了%d万，你离创业又近了一步\n",moneylist[moneyindex]);
@@ -113,7 +113,7 @@ void beginwork(){
     }
     else if(i==2){
         if(rand()%7==0){
-            puts("你过劳猝死了，你的钱只能跟你进坟墓了QAQ");
+            puts("你过劳猝死了，你的钱再也没机会用了QAQ");
             exit(0);
         }
         printf("你努力加班了一个月，老板很开心，给你发了%d万，你离创业又近了一步\n",moneylist[moneyindex]*2);
@@ -192,6 +192,6 @@ int main()
     for(int i=0;i<5;i++){
         beginwork();
     }
-    puts("你过劳猝死了，你的钱只能跟你进坟墓了QAQ");
+    puts("你过劳猝死了，你的钱再也没机会用了QAQ");
     exit(0);
 }
