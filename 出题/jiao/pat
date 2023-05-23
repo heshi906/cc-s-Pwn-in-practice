@@ -1,0 +1,2 @@
+patchelf --set-interpreter ./ld-2.23.so ./test
+patchelf --replace-needed  libc.so.6 ./libc.so.6 ./test
