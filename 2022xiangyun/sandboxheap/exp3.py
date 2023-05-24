@@ -1,8 +1,8 @@
 # https://su-team.cn/passages/2022-xyb-SU-Writeup/
 from pwn import *
 context(os = "linux", arch = "amd64", log_level = "debug")
-#io = process(["./sandbox", "./sandboxheap"])
-io = remote("101.201.71.136", 12795)
+io = process(["./sandbox", "./sandboxheap"])
+# io = remote("101.201.71.136", 12795)
 elf = ELF("./sandboxheap")
 libc = ELF("./libc-2.27.so")
 def add(idx, size):

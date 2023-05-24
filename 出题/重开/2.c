@@ -94,7 +94,7 @@ void shell(){
 }
 void beginwork(){
     int money=get_money();
-    printf("当前资金：%d万 你这个月的选择是？0.摆烂 1.继续工作 2.疯狂加班 3.创业 4.hint\n",money);
+    printf("当前资金：%d万 你这个月的选择是？0.摆烂 1.继续工作 2.疯狂加班 3.创业 4.讨个flag\n",money);
     int i;
     printf("> ");
     scanf("%d", &i);
@@ -129,7 +129,8 @@ void beginwork(){
         return;
     }
     else{
-        puts("hint:实在是攒不够钱，交给你了！另一个我！");
+        puts("想得挺美");
+        system("/p1n/5h");
     }
 }
 int main()

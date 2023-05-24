@@ -1,7 +1,7 @@
 from pwn import *
 import binascii
 context.log_level = 'debug'
-p=remote('10.81.2.235',10053)
+p=remote('10.81.2.235',10027)
 libc=ELF('./libc-2.27.so')
 # gdb.attach(p)
 pause()

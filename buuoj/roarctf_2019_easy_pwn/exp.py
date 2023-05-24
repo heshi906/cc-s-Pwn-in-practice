@@ -18,7 +18,7 @@ def gdba(x=''):
 	if type(p)==pwnlib.tubes.remote.remote:
 		return
 	elif type(p)==pwnlib.tubes.process.process:
-		gdb.attach(p,x)
+		# gdb.attach(p,x)
 		pause()
 
 p=process("./roarctf_2019_easy_pwn")
