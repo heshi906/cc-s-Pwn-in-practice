@@ -1,0 +1,14 @@
+start
+b *$rebase(0x00000000000012B6)
+c
+stack 30
+q
+c
+n
+stack 30
+c
+n
+stack 20
+x/10i *$rebase(0000000000001228)
+x/10i $rebase(0000000000001228)
+x/10i $rebase(0x000000000001228)
