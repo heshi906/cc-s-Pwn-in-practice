@@ -1,0 +1,6 @@
+gcc -o EzNote EzNote.c -Wl,-z,relro,-z,now -fstack-protector-all -D_FORTIFY_SOURCE=2 -fpie -pie
+
+patchelf --replace-needed libc.so.6  /home/cc/glibc-all-in-one/libs/2.23-0ubuntu3_amd64/libc-2.23.so ./EzNote
+patchelf --set-interpreter  /home/cc/glibc-all-in-one/libs/2.23-0ubuntu3_amd64/ld-2.23.so ./EzNote
+
+strip ./EzNote

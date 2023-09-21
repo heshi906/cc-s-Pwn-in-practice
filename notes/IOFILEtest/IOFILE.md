@@ -1,4 +1,10 @@
 # IOFILE
+
+https://ywhkkx.github.io/2022/03/16/IO_FILE%20pwn/
+https://blog.csdn.net/aptx4869_li/article/details/122971995
+
+![Alt text](image.png)
+
 FILE结构在程序执行fopen等函数时会进行创建，分配在堆中，以链表的形式串联。  
 但系统会在一开始自动创建三个FILE，他们是stdin、stdout、stderr，位于libc。  
 
@@ -93,3 +99,6 @@ struct _IO_jump_t
 - fwrite      最终会调用 _IO_file_xsputn
 - fread       最终会调用 _IO_fiel_xsgetn
 - scanf/gets  最终会调用 _IO_file_xsgetn
+
+vtable 劫持
+p*(struct _IO_jump_t*)_IO_list_all.vtable
