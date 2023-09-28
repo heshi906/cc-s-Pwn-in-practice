@@ -109,7 +109,7 @@ int main() {
   setvbuf(stdout, 0, 2, 0);
   setvbuf(stdin, 0, 2, 0);
   nothing[0] = (char *)malloc(0xf20);
-  printf("A gift for you~: %p\n",nothing);
+  printf("A gift for you~: %p\n",nothing[0]);
   while(1) {
     menu();
     read(0, buf, 8);

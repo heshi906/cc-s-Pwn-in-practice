@@ -5,6 +5,8 @@ https://blog.csdn.net/aptx4869_li/article/details/122971995
 
 FSOP描述的最清晰易懂的文章https://ywhkkx.github.io/2022/04/01/IO_FILE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%EF%BC%9AFSOP/
 
+这个讲的最清晰https://www.cnblogs.com/ZIKH26/articles/16712469.html
+
 ![Alt text](image.png)
 
 FILE结构在程序执行fopen等函数时会进行创建，分配在堆中，以链表的形式串联。  
@@ -27,6 +29,8 @@ p/x *(struct _IO_FILE_plus*)0x7f********** //stdout的地址
 p/x *stdout
 
 p/x *(struct _IO_FILE_plus*)_IO_2_1_stderr_.file._chain
+p *((struct _IO_FILE_plus*)((struct _IO_FILE_plus*)_IO_list_all).file._chain)
+p &_IO_list_all->file._chain
 p/x *_IO_2_1_stderr_.file._chain
 _IO_FILE
 ```
